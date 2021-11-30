@@ -127,7 +127,7 @@ While individual methods may assume a certain underlying structure within the se
 
 We define the lineages predicted by RhierBAPS as a restrictive variable. You can download the Rmd [here](https://github.com/Leytoncito/IS_Prokka_Panaroo/tree/main/Reproductibilidad) and run it in Rstudio
 
-Our restricted PCoA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Ho = groups do not differ in spread or position in multivariable space.
+Our restricted PCoA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Permanova has the null hypothesis that groups do not differ in spread or position in multivariable space. In this study we did a permanova test with 10,000 permutations.
 
 
 ## 6. Random Forest
