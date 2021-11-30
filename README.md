@@ -125,11 +125,13 @@ Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame
 
 While individual methods may assume a certain underlying structure within the set of dependent variables (for example PCA and CA) no structure of the sample itself is assumed, these methods are called "unconstrained" or indirect gradient analysis. Secondly, "constrained" or direct gradient analysisexplicitly includes two or more differents sets of ecological or feature information into single analysis and hence directly examines relationships between sets of variables.Examples of these methods are RA, CCA and CPCoA.
 
-We define the lineages predicted by RhierBAPS as a restrictive variable. You can download the Rmd [here](https://github.com/Leytoncito/IS_Prokka_Panaroo/tree/main/Reproductibilidad) and run it in Rstudio
+We define the lineages predicted by RhierBAPS as a restrictive variable. Our restricted PCoA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Permanova has the null hypothesis that groups do not differ in spread or position in multivariable space. In this study we did a permanova test with 10,000 permutations.
 
-Our restricted PCoA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Permanova has the null hypothesis that groups do not differ in spread or position in multivariable space. In this study we did a permanova test with 10,000 permutations.
-
+ You can download the Rmd and metadata [here](https://github.com/Leytoncito/IS_Prokka_Panaroo/tree/main/Reproductibilidad) and run it in Rstudio.
 
 ## 6. Random Forest
 
+Ramdon forest is a machine learning method for classificacion, regression and other tasks. Random forest works with many decision trees. As we mentioned in the manuscript Random Forest has the advantage of incorporating a vast and diverse number of data to predict characteristics. We define the response variable as the number of ARGs, lineages and country. Then we defend insertion sequences as predictor variables. We rank the variables according to their importance in the classification and then we graph the 5% of the most important variables for the classification of characteristics.
+
+We use the kappa concordance test to measure the performance of the classification, and
 
