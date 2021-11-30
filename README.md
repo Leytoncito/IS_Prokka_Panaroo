@@ -83,7 +83,7 @@ to build a tree based on the core alignment:
 
 `iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto`
 
-[Rhierbaps](https://github.com/gtonkinhill/rhierbaps)
+[RhierBAPS](https://github.com/gtonkinhill/rhierbaps) ( hierarchical Bayesian Analysis of Population Structure) seeks to spatially model the variation of DNA sequences with the aim of grouping these DNA sequences and reveal nested genetic population structures. RhierBAPS is an R implementation and only one alignment and one tree are needed.
 
 ``` 
 library(rhierbaps)
@@ -110,7 +110,7 @@ dev.off()
 write.xlsx(hb.results$partition.df, "levels.xlsx")
 ```
 
-
+This yields two outputs, 1) a colorful tree with hierarchical levels and 2) an excel table with the hierarchical level for each genome studied.
  
 
 ## 4. Recombinacion/Mutacion.
