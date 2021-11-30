@@ -39,13 +39,21 @@ After this, we already have genomes and their respective neat and clean informat
 
 ## 2. Study of insertion sequences using Prokka and Panaroo.
 
+Insert sequence annotation is a complex issue today. Various strategies have been proposed, tools such as ISEScan and digIS, propose to find complete insertion sequences (transposases and IR) and also, new insertion sequences. However, the output files these programs is impractical for large-scale studies. We chose Prokka for the IS annotation because its output is practical and can be coupled with other programs such as Panaroo. 
 ```
 for file in *.fna; do
     ../../benjamin_leyton/prokka/bin/prokka $file --cpus 0 --kingdom Bacteria --proteins --prefix ${file%%.fna} --locustag ${file%%.fna} --centre Bioren --compliant --addgenes --outdir ${file%%.fna}
 done
 ```
 
-`panaroo-qc -t 8 --graph_type all -i *.gff --ref_db ../../benjamin_leyton/refseq.genomes.k21s1000.msh -o panaroo-qc`
+Prokka's gff output is powerful, but this is not the most important reason, considering the nature of the insertion sequences, the mere presence / absence of this is not enough to relate them to some phenotypic characteristic. It is known that copies of a specific IS can be located in various parts of the genome, so it is necessary to study not only the presence / absence of the IS, but rather the abundance and presence of the IS as a whole. To study the presence of IS we could take a tool to detect IS in each genome, then reduce the redundancy of the sequences (for example with CD-HIT) and finally make a binary matrix using for example LS-BSR, but as we mentioned before , this drawing is not sufficient considering the nature of the insertion sequences.
+
+Due to the above, we propose a more comfortable and powerful approach. Prokka can annotate IS transposases (with good performance) and provides a Panaroo compatible gff file. The beauty of Panaroo is that it can reduce transposase redundancy using current and more sophisticated algorithms (in our humble opinion).
+
+`panaroo-qc -t 8 --graph_type all -i *.gff --ref_db ../../benjamin_leyton/refseq.genomes.k21s1000.msh -o panaroo-qc` # for QC
+`nohup panaroo -i ./gff/*.gff -o ./panaroo/ --clean-mode moderate -a core -- core_threshold 0.95 -t 8 -f 0.6 --refind_prop_match 0.5 --search_radius 6000 > panaroo.log &`
+
+We then got a subset of Panroo's results with a R code:
 
 ```
 library(xlsx)
@@ -54,6 +62,8 @@ filas <- grep("transposase", panaroo_striatum$Annotation, ignore.case = TRUE)
 IS_striatum <- panaroo_diphtheriae[c(filas_diph),]
 write.xlsx(IS_striatum, "IS_diphtheriae.xlsx")
 ```
+Finally, to create the matrix of presence and abundance of IS (transposases), it is enough to "count" the number of loci in the cells. A formula like this will work:
+
 =SI(ESBLANCO(H93);"";LARGO(H93)-LARGO(SUSTITUIR(H93;" ";""))+1)
 
 ## 3. Coregenome alignment using parsnp  phylogenetic tree using iqtree
