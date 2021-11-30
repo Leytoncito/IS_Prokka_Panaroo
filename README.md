@@ -127,6 +127,8 @@ While individual methods may assume a certain underlying structure within the se
 
 We define the lineages predicted by RhierBAPS as a restrictive variable
 
+Our restricted PCA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Ho = groups do not differ in spread or position in multivariable space.
+
 
 ## 6. Random Forest
 
