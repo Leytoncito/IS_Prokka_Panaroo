@@ -66,19 +66,27 @@ Finally, to create the matrix of presence and abundance of IS (transposases), it
 
 =SI(ESBLANCO(H93);"";LARGO(H93)-LARGO(SUSTITUIR(H93;" ";""))+1)
 
-## 3. Coregenome alignment using parsnp  phylogenetic tree using iqtree
+## 3. Coregenome alignment and phylogenetic analysis
 
-parsnp -d ./genomas/fna/ -r ./referencia/GCA_002803965.1.fna -c -p 8 -o ./parsnp/
-harvesttools -i parsnp.ggr -M parsnp.aln
-iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto
+SNP-based alignment was performed using parsnp, then we transform the output of parsnp to a conventional alignment output.
 
-## 4. Recombination Analysis Using ClonalFrame and Gubbins
+`parsnp -d ./genomas/fna/ -r ./referencia/GCA_002803965.1.fna -c -p 8 -o ./parsnp/`
 
-ClonalFrameML newick_file aln_file output_file 
-run_gubbins aln_file 
+`harvesttools -i parsnp.ggr -M parsnp.aln`
 
-11. Classification of lineages using Rhierbaps.
+The phylogenetic tree was built with IQtree:
 
+`iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto`
+
+Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
+ 
+`run_gubbins aln_file`
+
+`ClonalFrameML newick_file aln_file output_file`
+
+## 4 Classification of lineages using Rhierbaps.
+
+``` 
 library(rhierbaps)
 library(ggtree)
 library(phytools)
@@ -101,7 +109,7 @@ gg  <-  gg  + geom_tippoint (aes ( color  =  factor ( `level 1` )))
 gg
 dev.off()
 write.xlsx(hb.results$partition.df, "levels.xlsx")
-
+```
 
 13. Distance matrix
 
