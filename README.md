@@ -125,7 +125,7 @@ Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame
 
 While individual methods may assume a certain underlying structure within the set of dependent variables (for example PCA and CA) no structure of the sample itself is assumed, these methods are called "unconstrained" or indirect gradient analysis. Secondly, "constrained" or direct gradient analysisexplicitly includes two or more differents sets of ecological or feature information into single analysis and hence directly examines relationships between sets of variables.Examples of these methods are RA, CCA and CPCoA.
 
-We define the lineages predicted by RhierBAPS as a restrictive variable
+We define the lineages predicted by RhierBAPS as a restrictive variable. You can download the Rmd [here](https://github.com/Leytoncito/IS_Prokka_Panaroo/tree/main/Reproductibilidad) and run it in Rstudio
 
 Our restricted PCA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Ho = groups do not differ in spread or position in multivariable space.
 
