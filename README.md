@@ -117,11 +117,16 @@ This yields two outputs, 1) a colorful tree with hierarchical levels and 2) an e
 
 Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
 
-`run_gubbins aln_file`
+`run_gubbins parsnp.aln`
 
-`ClonalFrameML newick_file aln_file output_file`
+`ClonalFrameML arbol.tree parsnp.aln output_CFML`
 
 ## 5. Constrained PCoA analysis
+
+While individual methods may assume a certain underlying structure within the set of dependent variables (for example PCA and CA) no structure of the sample itself is assumed, these methods are called "unconstrained" or indirect gradient analysis. Secondly, "constrained" or direct gradient analysisexplicitly includes two or more differents sets of ecological or feature information into single analysis and hence directly examines relationships between sets of variables.Examples of these methods are RA, CCA and CPCoA.
+
+We define the lineages predicted by RhierBAPS as a restrictive variable
+
 
 ## 6. Random Forest
 
