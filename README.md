@@ -69,25 +69,21 @@ Finally, to create the matrix of presence and abundance of IS (transposases), it
 
 =IF(ISBLANK (H93);"";LONG(H93)-LONG(SUBSTITUTE (H93;""; ""))+1)
 
-## 3. Coregenome alignment and phylogenetic analysis
+## 3. Classify the studied genomes into lineages
 
-SNP-based alignment was performed using parsnp, then we transform the output of parsnp to a conventional alignment output.
+SNP-based alignment was performed using Parsnp. [Pasnp](https://harvest.readthedocs.io/en/latest/content/parsnp.html) makes a global alignment of the core genome and identifies the SNPs
 
 `parsnp -d ./genomas/fna/ -r ./referencia/GCA_002803965.1.fna -c -p 8 -o ./parsnp/`
 
+then we transform the output of parsnp to a conventional alignment output.
+
 `harvesttools -i parsnp.ggr -M parsnp.aln`
 
-The phylogenetic tree was built with IQtree:
+to build a tree based on the core alignment: 
 
 `iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto`
 
-Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
- 
-`run_gubbins aln_file`
-
-`ClonalFrameML newick_file aln_file output_file`
-
-## 4 Classification of lineages using Rhierbaps.
+[Rhierbaps](https://github.com/gtonkinhill/rhierbaps)
 
 ``` 
 library(rhierbaps)
@@ -97,13 +93,13 @@ library(ape)
 library(xlsx)
 
 set.seed(1234)
-fasta.file.name <- "parsnp.aln" #Aqui tambien se puede usar un aln enmascarado libre de recombinacion producido por gubbins o clonal_frame
+fasta.file.name <- "parsnp.aln"
 snp.matrix <- load_fasta(fasta.file.name)
 hb.results <- hierBAPS(snp.matrix, max.depth = 2, n.pops = 20, quiet = TRUE)
 #hb.results  <- hierBAPS ( snp.matrix , max.depth  =  2 , n.pops  =  20 , n.extra.rounds  =  Inf , 
      #quiet  =  TRUE )
 head(hb.results$partition.df)
-newick.file.name  <- arlbol.tree
+newick.file.name  <- arbol.tree
 iqtree  <-  phytools :: read.newick ( newick.file.name )
 pdf("rhierbaps_results_circular.pdf")
 gg  <- ggtree ( iqtree , layout  =  " circular " )
@@ -114,12 +110,19 @@ dev.off()
 write.xlsx(hb.results$partition.df, "levels.xlsx")
 ```
 
-13. Distance matrix
 
-15. Constrained PCoA analysis
+ 
 
-17. Random Forest
+## 4. Recombinacion/Mutacion.
 
-probando 
+Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
 
-porbando
+`run_gubbins aln_file`
+
+`ClonalFrameML newick_file aln_file output_file`
+
+## 5. Constrained PCoA analysis
+
+## 6. Random Forest
+
+
