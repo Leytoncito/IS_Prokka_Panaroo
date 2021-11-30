@@ -37,13 +37,65 @@ write.csv(t3, "metadatos.csv")
 ```
 After this, we already have genomes and their respective neat and clean information.
 
-3. Annotation using Prokka.
-4. Construction of pangenome using Panaroo.
-5. Coregenome alignment using parsnp
-6. phylogenetic tree using iqtree
-7. Recombination Analysis Using ClonalFrame and Gubbins
-8. Classification of lineages using Rhierbaps.
-9. Distance matrix
-10. Constrained PCoA analysis
-11. Random Forest
+## 2. Study of insertion sequences using Prokka and Panaroo.
+
+```
+for file in *.fna; do
+    ../../benjamin_leyton/prokka/bin/prokka $file --cpus 0 --kingdom Bacteria --proteins --prefix ${file%%.fna} --locustag ${file%%.fna} --centre Bioren --compliant --addgenes --outdir ${file%%.fna}
+done
+```
+
+`panaroo-qc -t 8 --graph_type all -i *.gff --ref_db ../../benjamin_leyton/refseq.genomes.k21s1000.msh -o panaroo-qc`
+
+```
+library(xlsx)
+panaroo_striatum <- read.csv(file = "gene_presence_absence_roary.csv")
+filas <- grep("transposase", panaroo_striatum$Annotation, ignore.case = TRUE)
+IS_striatum <- panaroo_diphtheriae[c(filas_diph),]
+write.xlsx(IS_striatum, "IS_diphtheriae.xlsx")
+```
+=SI(ESBLANCO(H93);"";LARGO(H93)-LARGO(SUSTITUIR(H93;" ";""))+1)
+
+## 3. Coregenome alignment using parsnp  phylogenetic tree using iqtree
+
+parsnp -d ./genomas/fna/ -r ./referencia/GCA_002803965.1.fna -c -p 8 -o ./parsnp/
+harvesttools -i parsnp.ggr -M parsnp.aln
+iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto
+
+## 4. Recombination Analysis Using ClonalFrame and Gubbins
+
+ClonalFrameML newick_file aln_file output_file 
+run_gubbins aln_file 
+
+11. Classification of lineages using Rhierbaps.
+
+library(rhierbaps)
+library(ggtree)
+library(phytools)
+library(ape)
+library(xlsx)
+
+set.seed(1234)
+fasta.file.name <- "parsnp.aln" #Aqui tambien se puede usar un aln enmascarado libre de recombinacion producido por gubbins o clonal_frame
+snp.matrix <- load_fasta(fasta.file.name)
+hb.results <- hierBAPS(snp.matrix, max.depth = 2, n.pops = 20, quiet = TRUE)
+#hb.results  <- hierBAPS ( snp.matrix , max.depth  =  2 , n.pops  =  20 , n.extra.rounds  =  Inf , 
+     #quiet  =  TRUE )
+head(hb.results$partition.df)
+newick.file.name  <- arlbol.tree
+iqtree  <-  phytools :: read.newick ( newick.file.name )
+pdf("rhierbaps_results_circular.pdf")
+gg  <- ggtree ( iqtree , layout  =  " circular " )
+gg  <-  gg % < + % hb.results $ partición.df 
+gg  <-  gg  + geom_tippoint (aes ( color  =  factor ( `level 1` )))
+gg
+dev.off()
+write.xlsx(hb.results$partition.df, "levels.xlsx")
+
+
+13. Distance matrix
+
+15. Constrained PCoA analysis
+
+17. Random Forest
 
