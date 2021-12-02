@@ -48,9 +48,10 @@ done
 
 Prokka's gff output is powerful, but this is not the most important reason, considering the nature of the insertion sequences, the mere presence / absence of this is not enough to relate them to some phenotypic characteristic. It is known that copies of a specific IS can be located in various parts of the genome, so it is necessary to study not only the presence / absence of the IS, but rather the abundance and presence of the IS as a whole. To study the presence of IS we could take a tool to detect IS in each genome, then reduce the redundancy of the sequences (for example with CD-HIT) and finally make a binary matrix using for example LS-BSR, but as we mentioned before , this drawing is not sufficient considering the nature of the insertion sequences.
 
-Due to the above, we propose a more comfortable and powerful approach. Prokka can annotate IS transposases (with good performance) and provides a Panaroo compatible gff file. The beauty of Panaroo is that it can reduce transposase redundancy using current and more sophisticated algorithms (in our humble opinion).
+Due to the above, we propose a more comfortable and powerful approach. Prokka can annotate IS transposases (with good performance) and provides a Panaroo compatible gff file. Panaroo is a tool to build the pangenome. The pangenome is the collection in of all genes of a studied species. These genes are classified into families based on their orthology. Panaroo can reduce transposase redundancy using current and more sophisticated algorithms (in our humble opinion).
 
 `panaroo-qc -t 8 --graph_type all -i *.gff --ref_db ../../benjamin_leyton/refseq.genomes.k21s1000.msh -o panaroo-qc` # for QC
+
 `nohup panaroo -i ./gff/*.gff -o ./panaroo/ --clean-mode moderate -a core -- core_threshold 0.95 -t 8 -f 0.6 --refind_prop_match 0.5 --search_radius 6000 > panaroo.log &`
 
 We then got a subset of Panroo's results with a R code:
@@ -62,29 +63,27 @@ filas <- grep("transposase", panaroo_striatum$Annotation, ignore.case = TRUE)
 IS_striatum <- panaroo_diphtheriae[c(filas_diph),]
 write.xlsx(IS_striatum, "IS_diphtheriae.xlsx")
 ```
-Finally, to create the matrix of presence and abundance of IS (transposases), it is enough to "count" the number of loci in the cells. A formula like this will work:
+Finally, to create the matrix of presence and abundance of IS (transposases), it is enough to "count" the number of loci in the cells. A Excel formula like this will work:
 
 =SI(ESBLANCO(H93);"";LARGO(H93)-LARGO(SUSTITUIR(H93;" ";""))+1)
 
-## 3. Coregenome alignment and phylogenetic analysis
+=IF(ISBLANK (H93);"";LONG(H93)-LONG(SUBSTITUTE (H93;""; ""))+1)
 
-SNP-based alignment was performed using parsnp, then we transform the output of parsnp to a conventional alignment output.
+## 3. Classify the studied genomes into lineages
+
+SNP-based alignment was performed using Parsnp. [Pasnp](https://harvest.readthedocs.io/en/latest/content/parsnp.html) makes a global alignment of the core genome and identifies the SNPs
 
 `parsnp -d ./genomas/fna/ -r ./referencia/GCA_002803965.1.fna -c -p 8 -o ./parsnp/`
 
+then we transform the output of parsnp to a conventional alignment output.
+
 `harvesttools -i parsnp.ggr -M parsnp.aln`
 
-The phylogenetic tree was built with IQtree:
+to build a tree based on the core alignment: 
 
 `iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto`
 
-Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
- 
-`run_gubbins aln_file`
-
-`ClonalFrameML newick_file aln_file output_file`
-
-## 4 Classification of lineages using Rhierbaps.
+[RhierBAPS](https://github.com/gtonkinhill/rhierbaps) ( hierarchical Bayesian Analysis of Population Structure) seeks to spatially model the variation of DNA sequences with the aim of grouping these DNA sequences and reveal nested genetic population structures. RhierBAPS is an R implementation and only one alignment and one tree are needed.
 
 ``` 
 library(rhierbaps)
@@ -94,13 +93,13 @@ library(ape)
 library(xlsx)
 
 set.seed(1234)
-fasta.file.name <- "parsnp.aln" #Aqui tambien se puede usar un aln enmascarado libre de recombinacion producido por gubbins o clonal_frame
+fasta.file.name <- "parsnp.aln"
 snp.matrix <- load_fasta(fasta.file.name)
 hb.results <- hierBAPS(snp.matrix, max.depth = 2, n.pops = 20, quiet = TRUE)
 #hb.results  <- hierBAPS ( snp.matrix , max.depth  =  2 , n.pops  =  20 , n.extra.rounds  =  Inf , 
      #quiet  =  TRUE )
 head(hb.results$partition.df)
-newick.file.name  <- arlbol.tree
+newick.file.name  <- arbol.tree
 iqtree  <-  phytools :: read.newick ( newick.file.name )
 pdf("rhierbaps_results_circular.pdf")
 gg  <- ggtree ( iqtree , layout  =  " circular " )
@@ -111,12 +110,28 @@ dev.off()
 write.xlsx(hb.results$partition.df, "levels.xlsx")
 ```
 
-13. Distance matrix
+This yields two outputs, 1) a colorful tree with hierarchical levels and 2) an excel table with the hierarchical level for each genome studied.
+ 
 
-15. Constrained PCoA analysis
+## 4. Recombinacion/Mutacion.
 
-17. Random Forest
+Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
 
-probando 
+`run_gubbins parsnp.aln`
 
-porbando
+`ClonalFrameML arbol.tree parsnp.aln output_CFML`
+
+## 5. Constrained PCoA analysis
+
+While individual methods may assume a certain underlying structure within the set of dependent variables (for example PCA and CA) no structure of the sample itself is assumed, these methods are called "unconstrained" or indirect gradient analysis. Secondly, "constrained" or direct gradient analysisexplicitly includes two or more differents sets of ecological or feature information into single analysis and hence directly examines relationships between sets of variables.Examples of these methods are RA, CCA and CPCoA.
+
+We define the lineages predicted by RhierBAPS as a restrictive variable. Our restricted PCoA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Permanova has the null hypothesis that groups do not differ in spread or position in multivariable space. In this study we did a permanova test with 10,000 permutations.
+
+ You can download the Rmd and metadata [here](https://github.com/Leytoncito/IS_Prokka_Panaroo/tree/main/Reproductibilidad) and run it in Rstudio.
+
+## 6. Random Forest
+
+Ramdon forest is a machine learning method for classificacion, regression and other tasks. Random forest works with many decision trees. As we mentioned in the manuscript Random Forest has the advantage of incorporating a vast and diverse number of data to predict characteristics. We define the response variable as the number of ARGs, lineages and country. Then we defend insertion sequences as predictor variables. We rank the variables according to their importance in the classification and then we graph the 5% of the most important variables for the classification of characteristics.
+
+We use the kappa concordance test to measure the performance of the classification, and Cross validation to evaluate the Random Forest model. You can see the code [here]()
+
