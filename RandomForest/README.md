@@ -36,4 +36,32 @@ set.seed(36)# p-value 0.02 para location 0.8
 split = sample.split(df_lineage$Lineage, SplitRatio = 0.80)
 training_set = subset(df_lineage, split == TRUE)
 testing_set = subset(df_lineage, split == FALSE)
+
+rf_model_linaje <- randomForest(Lineage ~., data = training_set,
+                                ntree=501, importance=T, confusion=T, err.rate=T)
+                                
+pred_test_class <- predict(rf_model_linaje, testing_set, type="class", norm.votes=TRUE, predict.all=FALSE, proximity=FALSE, nodes=FALSE)
+head(pred_test_class)
+Cm<-confusionMatrix(pred_test_class, testing_set$Lineage)
+table<-Cm$table
+
+library(fmsb)
+kappa_location<-Kappa.test(table)
+kappa_location
+kappa_lineage<-Kappa.test(table)
+kappa_lineage
+kappa_arg<-Kappa.test(table)
+kappa_arg
+
+write.xlsx(rf_model_arg$importance, file = "arg_gini.xlsx")
+write.xlsx(rf_model_linaje$importance, file= "lineage_gini.xlsx")
+write.xlsx(rf_model_location$importance, file="location_gini.xlsx")
+
+#Cross-Validation
+library(rfUtilities)
+fold_linaje<-rf.crossValidation(rf_model_linaje, training_set, ydata = NULL, p = 0.5, n = 100,
+                   seed = NULL, normalize = FALSE, bootstrap = FALSE, trace = FALSE)
+
+significance_linaje<-rf.significance(rf_model_linaje, training_set[-1], nperm = 10, p= 0.05)
+significance_linaje
 ```
