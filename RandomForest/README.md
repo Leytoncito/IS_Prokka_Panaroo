@@ -61,6 +61,7 @@ fold_linaje<-rf.crossValidation(rf_model_linaje, training_set, ydata = NULL, p =
 ```
 Finally, we save the files with gini index.
 ```
+library(xlsx)
 write.xlsx(rf_model_linaje$importance, file= "lineage_gini.xlsx")
 ```
 
