@@ -44,6 +44,7 @@ rf_model_linaje <- randomForest(Lineage ~., data = training_set,
 
 We validate the model with the test set, perform a kappa test, and a Cross-Validation.
                                 
+```
 pred_test_class <- predict(rf_model_linaje, testing_set, type="class", norm.votes=TRUE, predict.all=FALSE, proximity=FALSE, nodes=FALSE)
 head(pred_test_class)
 Cm<-confusionMatrix(pred_test_class, testing_set$Lineage)
