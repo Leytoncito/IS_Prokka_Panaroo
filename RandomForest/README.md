@@ -33,23 +33,33 @@ split = sample.split(df_lineage$Lineage, SplitRatio = 0.80)
 training_set = subset(df_lineage, split == TRUE)
 testing_set = subset(df_lineage, split == FALSE)
 
+
+Then we create the RF model
+
+```
 rf_model_linaje <- randomForest(Lineage ~., data = training_set,
                                 ntree=501, importance=T, confusion=T, err.rate=T)
+    
+```
+
+We validate the model with the test set, perform a kappa test, and a Cross-Validation.
                                 
 pred_test_class <- predict(rf_model_linaje, testing_set, type="class", norm.votes=TRUE, predict.all=FALSE, proximity=FALSE, nodes=FALSE)
 head(pred_test_class)
 Cm<-confusionMatrix(pred_test_class, testing_set$Lineage)
 table<-Cm$table
 
-library(fmsb)
+##Kappa test
 kappa_lineage<-Kappa.test(table)
 kappa_lineage
 
-write.xlsx(rf_model_linaje$importance, file= "lineage_gini.xlsx")
-
 #Cross-Validation
-library(rfUtilities)
 fold_linaje<-rf.crossValidation(rf_model_linaje, training_set, ydata = NULL, p = 0.1, n = 100,
                    seed = 5, normalize = FALSE, bootstrap = FALSE, trace = FALSE)
 
 ```
+Finally, we save the files with gini index.
+```
+write.xlsx(rf_model_linaje$importance, file= "lineage_gini.xlsx")
+```
+
