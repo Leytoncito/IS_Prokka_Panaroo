@@ -133,5 +133,5 @@ We define the lineages predicted by RhierBAPS as a restrictive variable. Our res
 
 Ramdon forest is a machine learning method for classificacion, regression and other tasks. Random forest works with many decision trees. As we mentioned in the manuscript Random Forest has the advantage of incorporating a vast and diverse number of data to predict characteristics. We define the response variable as the number of ARGs, lineages and country. Then we defend insertion sequences as predictor variables. We rank the variables according to their importance in the classification and then we graph the 5% of the most important variables for the classification of characteristics.
 
-We use the kappa concordance test to measure the performance of the classification, and Cross validation to evaluate the Random Forest model. You can see the code [here]()
+We use the kappa concordance test to measure the performance of the classification, and Cross validation to evaluate the Random Forest model. You can see the code [here](https://github.com/Leytoncito/IS_Prokka_Panaroo/blob/main/RandomForest)
 
