@@ -33,13 +33,13 @@ split = sample.split(df_lineage$Lineage, SplitRatio = 0.80)
 training_set = subset(df_lineage, split == TRUE)
 testing_set = subset(df_lineage, split == FALSE)
 
+```
 
 Then we create the RF model
 
 ```
 rf_model_linaje <- randomForest(Lineage ~., data = training_set,
                                 ntree=501, importance=T, confusion=T, err.rate=T)
-    
 ```
 
 We validate the model with the test set, perform a kappa test, and a Cross-Validation.
