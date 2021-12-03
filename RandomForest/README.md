@@ -1,4 +1,4 @@
-## Random forest
+## Random forest (Summary code)
 
 First, We need import necessary libraries.
 
