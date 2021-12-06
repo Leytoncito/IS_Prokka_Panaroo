@@ -1,7 +1,8 @@
 ## Random forest (Summary code)
 
 
-WARNING: Due to the randomization of the methods, the values may vary.
+WARNING: Due to the randomization of the methods, the values may vary slightly.
+Note: You can download these files and run them in Rstudio.
 
 First, We need import necessary libraries.
 
