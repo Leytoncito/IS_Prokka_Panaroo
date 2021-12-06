@@ -94,6 +94,6 @@ fold_arg<-rf.crossValidation(rf_model_arg, training_set3, ydata = NULL, p = 0.2,
 
 #save output
 library(writexl)
-write_xlsx(rf_model_arg$importance, file = "arg_gini.xlsx")
-write_xlsx(rf_model_linaje$importance, file= "lineage_gini.xlsx")
+write_xlsx(as.data.frame(rf_model_arg$importance, "arg_gini.xlsx"))
+write_xlsx(rf_model_lineage$importance, file= "lineage_gini.xlsx")
 write_xlsx(rf_model_location$importance, file="location_gini.xlsx")
