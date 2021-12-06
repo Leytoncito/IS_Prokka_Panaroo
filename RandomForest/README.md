@@ -1,5 +1,8 @@
 ## Random forest (Summary code)
 
+
+WARNING: Due to the randomization of the methods, the values may vary.
+
 First, We need import necessary libraries.
 
 ```
