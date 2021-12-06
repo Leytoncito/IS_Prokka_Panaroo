@@ -9,7 +9,7 @@ library(caTools)
 
 #import metadata
 
-df<-read_xlsx("Supplementary_Data_2.xlsx", sheet = "detailed_dataframe")
+df<-read_xlsx("Supplementary_Data_1.xlsx", sheet = "detailed_dataframe")
 df_lineage = df[, c(2, 22:351)]
 df_location = df[, c(3, 22:351)]
 df_arg = df[, c(6, 22:351)]
@@ -93,7 +93,28 @@ fold_arg<-rf.crossValidation(rf_model_arg, training_set3, ydata = NULL, p = 0.2,
                                 seed = 24, normalize = FALSE, bootstrap = FALSE, trace = TRUE)
 
 #save output
+rank_IS_lineages<-as.data.frame(rf_model_lineage$importance)
+rank_lineages<-row.names(rank_IS_lineages)
+rank_lineages<-as.data.frame(rank_lineages)
+rank_lineages$gini_lineages<-rank_IS_lineages$MeanDecreaseGini
+
+rank_IS_locations<-as.data.frame(rf_model_location$importance)
+rank_locations<-row.names(rank_IS_locations)
+rank_locations<-as.data.frame(rank_locations)
+rank_locations$gini_locations<-rank_IS_locations$MeanDecreaseGini
+
+rank_IS_arg<-as.data.frame(rf_model_arg$importance)
+rank_arg<-row.names(rank_IS_arg)
+rank_arg<-as.data.frame(rank_arg)
+rank_arg$gini_arg<-rank_IS_arg$MeanDecreaseGini
+
+Ginis_scores<-rank_lineages
+Ginis_scores$gini_location<-rank_locations$gini_locations
+Ginis_scores$gini_arg<-rank_arg$gini_arg
+
+
 library(writexl)
-write_xlsx(as.data.frame(rf_model_arg$importance, "arg_gini.xlsx"))
-write_xlsx(rf_model_lineage$importance, file= "lineage_gini.xlsx")
-write_xlsx(rf_model_location$importance, file="location_gini.xlsx")
+write_xlsx(Ginis_scores, "Ginis_scores.xlsx")
+
+#As a result of randomization, the gini scores may vary slightly.
+
