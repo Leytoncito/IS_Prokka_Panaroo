@@ -113,7 +113,7 @@ This generates two outputs, 1) a colorful tree with hierarchical levels and 2) a
 
 ## 4. Recombinacion/Mutacion.
 
-Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame.
+Recombination / mutation analyzes were carried out using [Gubbins](https://github.com/nickjcroucher/gubbins) and [ClonalFrame](https://github.com/xavierdidelot/ClonalFrameML).
 
 `run_gubbins parsnp.aln`
 
