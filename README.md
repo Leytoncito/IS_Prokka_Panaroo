@@ -2,12 +2,12 @@
 
 ## 1. Assemblies recovery of *C. striatum* genomes.
 
-There are several ways to retrieve genomes in NCBI, one way is through the command line. NCBI provides [command-line tools](https://www.ncbi.nlm.nih.gov/datasets/docs/v1/quickstarts/command-line-tools/) that allow you to download genomes from databases, including GenBank.
+NCBI provides [command-line tools](https://www.ncbi.nlm.nih.gov/datasets/docs/v1/quickstarts/command-line-tools/) that allow you to download genomes from databases, including GenBank.
 For this study we used the following:
 
 `./datasets download genome taxon "Corynebacterium striatum" --exclude-gff3 --exclude-protein --exclude-rna --assembly-source genbank`
 
-Then, to sort the files (This is especially useful for using the access ID, such as a fasta filename).
+Then, to sort the files.
 
 `unzip *.zip`
 ```
@@ -21,7 +21,7 @@ for f in ./ncbi_dataset/data/*; do
  done
  ```
 
-The metadata was retrieved from [NCBI pathogens](https://www.ncbi.nlm.nih.gov/pathogens//isolates/#taxgroup_name:%22Corynebacterium%20striatum%22), then with a bit of R code, we have input the information to each previously downloaded genome.
+The metadata was retrieved from [NCBI pathogens](https://www.ncbi.nlm.nih.gov/pathogens//isolates/#taxgroup_name:%22Corynebacterium%20striatum%22), then with R code, we enter the information for each previously downloaded genome.
  
 ```
 for f in *.fna; do echo ${f%%.fna}; done > genomas.txt
@@ -35,20 +35,19 @@ t1$V1=as.factor(t1$V1)
 t3<-merge(t1, t2, by, by.x = "V1", by.y = "Assembly", all.x=TRUE, sort=FALSE)
 write.csv(t3, "metadatos.csv")
 ```
-After this, we already have genomes and their respective information.
+
 
 ## 2. Study of insertion sequences using Prokka and Panaroo.
 
-Insertion sequences annotation is a complex issue today. Various strategies have been proposed, tools such as [ISEScan](https://github.com/xiezhq/ISEScan) and [digIS](https://github.com/janka2012/digIS) find complete insertion sequences (transposases and Inverted Repeats) and also, new insertion sequences. However, the output files generated  by this programs is impractical to for large-scale studies. Our aproach cosidered to use Prokka for the IS annotation because its output is practical and can be coupled with other programs such as [Panaroo](https://github.com/gtonkinhill/panaroo). 
+Our aproach cosidered to use [Prokka](https://github.com/tseemann/prokka) for the annotation. 
+
 ```
 for file in *.fna; do
     ../../benjamin_leyton/prokka/bin/prokka $file --cpus 0 --kingdom Bacteria --proteins --prefix ${file%%.fna} --locustag ${file%%.fna} --centre Bioren --compliant --addgenes --outdir ${file%%.fna};
 done
 ```
 
-Prokka's gff output is powerful, but this is not the most important reason, considering the nature of the insertion sequences, the mere presence / absence of this is not enough to relate them to some phenotypic characteristic. It is known that copies of a specific IS can be located in various parts of the genome, so it is necessary to study not only the presence / absence of the IS, but rather the abundance and presence of the IS as a whole. To study the presence of IS we could take a tool to detect IS in each genome, then reduce the redundancy of the sequences (for example with CD-HIT) and finally make a binary matrix using for example LS-BSR, but as we mentioned before , this drawing is not sufficient considering the nature of the insertion sequences.
-
-Due to the above, we propose a more comfortable and powerful approach. Prokka can annotate IS transposases (with good performance) and provides a Panaroo compatible gff file. Panaroo is a tool to build the pangenome. The pangenome is the collection of all genes of the studied organism. These genes are classified into families based on their orthology. Panaroo can reduce transposase redundancy using current and more sophisticated algorithms.
+To rebuild the pangenome we use [Panaro](https://github.com/gtonkinhill/panaroo). 
 
 `panaroo-qc -t 8 --graph_type all -i *.gff --ref_db ../../benjamin_leyton/refseq.genomes.k21s1000.msh -o panaroo-qc` # for QC
 
@@ -63,11 +62,11 @@ filas <- grep("transposase", panaroo_striatum$Annotation, ignore.case = TRUE)
 IS_striatum <- panaroo_diphtheriae[c(filas_diph),]
 write.xlsx(IS_striatum, "IS_diphtheriae.xlsx")
 ```
-Finally, to create the matrix of presence and abundance of IS (transposases), it is enough to "count" the number of loci in the cells. A Excel formula like this will work:
+Finally, to create the matrix of presence and abundance of IS (transposases), it is enough to "count" the number of loci in the Exel's cells. A Excel formula like this will work:
 
 =SI(ESBLANCO(H93);"";LARGO(H93)-LARGO(SUSTITUIR(H93;" ";""))+1)
 
-=IF(ISBLANK (H93);"";LARGE(H93)-LARGE(SUBSTITUTE(H93;""; ""))+1)
+=IF(ISBLANK(H93);"";LARGE(H93)-LARGE(SUBSTITUTE(H93;""; ""))+1)
 
 ## 3. Classify the studied genomes into lineages
 
