@@ -82,10 +82,9 @@ to build a tree based on the core alignment:
 
 `iqtree -s parsnp.aln -m GTR -pre arbol -bb 1000 -nt auto`
 
-[RhierBAPS](https://github.com/gtonkinhill/rhierbaps) ( hierarchical Bayesian Analysis of Population Structure) seeks to spatially model the variation of DNA sequences with the aim of grouping these DNA sequences and reveal nested genetic population structures. RhierBAPS is an R implementation and only one alignment and one tree are needed.
+To lineages detection [RhierBAPS](https://github.com/gtonkinhill/rhierbaps) ( hierarchical Bayesian Analysis of Population Structure) was used.
 
-``` 
-library(rhierbaps)
+```
 library(ggtree)
 library(phytools)
 library(ape)
@@ -109,12 +108,12 @@ dev.off()
 write.xlsx(hb.results$partition.df, "levels.xlsx")
 ```
 
-This yields two outputs, 1) a colorful tree with hierarchical levels and 2) an excel table with the hierarchical level for each genome studied.
+This generates two outputs, 1) a colorful tree with hierarchical levels and 2) an excel table with the hierarchical level for each genome studied.
  
 
 ## 4. Recombinacion/Mutacion.
 
-Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame. The reason for using both is that while Gubbins returns a score for each taxa, ClonalFrame provides a score at the general level.
+Recombination / mutation analyzes were carried out using Gubbins and ClonalFrame.
 
 `run_gubbins parsnp.aln`
 
