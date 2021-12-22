@@ -121,7 +121,7 @@ Recombination / mutation analyzes were carried out using [Gubbins](https://githu
 
 ## 5. Constrained PCoA analysis
 
-To find and explore the relationships of the characteristics of C. striatum with ISs, CPCoA was used.
+To find and explore the relationships of the characteristics of *C. striatum* with ISs, CPCoA was used.
 
 We define the lineages predicted by RhierBAPS as a restrictive variable. Our restricted PCoA analysis was validated using the permanova test. Permanova (Permutacional multivariable analysis of variance) is a non-parametric test based on dissimilarities. Permanova has the null hypothesis that groups do not differ in spread or position in multivariable space. In this study we did a permanova test with 10,000 permutations.
 
